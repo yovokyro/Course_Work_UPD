@@ -1,0 +1,19 @@
+﻿<Page x:Class="MinerGame.Pages.ComplexityPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:MinerGame.Pages"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="ComplexityPage">
+
+    <Grid HorizontalAlignment="Center" Width="800" Height="450" VerticalAlignment="Top">
+        <Rectangle Height="340" Margin="133,30,132,0" Stroke="Black" VerticalAlignment="Top" Fill="#4CFFFFFF"/>
+        <Label Content="Выберите режим игры" Margin="0,41,0,0" FontSize="36" FontFamily="Arial Black" HorizontalAlignment="Center" Width="470" Height="51" VerticalAlignment="Top"/>
+        <Button x:Name="buttonFastGame" Content="Быстрая игра" Margin="0,127,0,0" Background="#662BFF00" FontFamily="Arial Black" FontSize="15" BorderBrush="#FF37FF00" Click="buttonFastGame_Click" HorizontalAlignment="Center" Width="470" Height="60" VerticalAlignment="Top"/>
+        <Button x:Name="buttonNormalGame" Content="Обычная игра" Margin="0,200,0,0" FontFamily="Arial Black" FontSize="15" Background="#662BFF00" BorderBrush="#FF13FF00" Click="buttonNormalGame_Click" HorizontalAlignment="Center" Width="470" Height="60" VerticalAlignment="Top"/>
+        <Button Content="Длительная игра" Margin="0,275,0,0" VerticalAlignment="Top" Height="60" Background="#6608FF00" BorderBrush="#FF00FF33" FontFamily="Arial Black" FontSize="15" Click="buttonLongGame_Click" HorizontalAlignment="Center" Width="470"/>
+        <Button x:Name="buttonBack" Content="Вернуться" Margin="0,393,0,10" BorderBrush="Red" Background="#66FF0000" Click="buttonBack_Click" FontSize="15" FontFamily="Arial" HorizontalAlignment="Center" Width="180"/>
+    </Grid>
+</Page>
