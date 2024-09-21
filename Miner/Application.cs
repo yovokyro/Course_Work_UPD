@@ -9,6 +9,7 @@ using Miner.ObjectGraph;
 using Miner.Object.MineSelection;
 using Miner.Object.Enum;
 using System;
+using UPDController;
 
 namespace Miner
 {
@@ -17,6 +18,8 @@ namespace Miner
     /// </summary>
     public class Application
     {
+
+        private ISocket _socket;
         private string[] _name = new string[2];
 
         private bool _game;
@@ -85,10 +88,12 @@ namespace Miner
         private int _mineLarge;
         private int[] _boom;
 
-        public Application(Dictionary<int, int> mine1, Dictionary<int, int> mine2, string[] name, float musicVolume, float soundsVolume)
+        public Application(ISocket socket, PlayerSetting player, float musicVolume, float soundsVolume)
         {
-            _name[0] = name[0];
-            _name[1] = name[1];
+            _socket = socket;
+
+            _name[0] = "";
+            _name[1] = "";
 
             _game = true;
             _win = "Игра завершена!";
@@ -117,21 +122,30 @@ namespace Miner
 
             _movementSpeed = _mainSize / 20;
             _playerOneSprite = new int[2];
-            string path = randomSkin.GetDirectory();
+            string path = randomSkin.GetDirectory(0, 2);
             _playerOneSprite[0] = _dx2d.GetImageLoad($@"{path}\player_stand.bmp");
             _playerOneSprite[1] = _dx2d.GetImageLoad($@"{path}\player_mining.bmp");
 
-            _playerTwoSprite = new int[4];
-            path = randomSkin.GetDirectory();
+            _playerTwoSprite = new int[2];
+            path = randomSkin.GetDirectory(2, 4);
             _playerTwoSprite[0] = _dx2d.GetImageLoad($@"{path}\player_stand.bmp");
             _playerTwoSprite[1] = _dx2d.GetImageLoad($@"{path}\player_mining.bmp");
 
             _playerDead = _dx2d.GetImageLoad(@"..\..\..\Resources\players\player_dead.bmp");
 
-            _playerOne = new PlayerGame(new Player(new Vector2(_mainSize * 3, _mainSize + (float)(_mainSize * 2)), _movementSpeed), new Sprite(_playerOneSprite[0], _mainSize - 2, _mainSize - 2, 0), mine1);
-            _playerTwo = new PlayerGame(new Player(new Vector2(_mainSize * 31, _mainSize + (float)(_mainSize * 16)), _movementSpeed), new Sprite(_playerTwoSprite[0], _mainSize - 2, _mainSize - 2, 0), mine2);
+
+            if (_socket is Client client)
+            {
+                _playerOne = new PlayerGame(new Player(new Vector2(_mainSize * 31, _mainSize + (float)(_mainSize * 16)), _movementSpeed), new Sprite(_playerTwoSprite[0], _mainSize - 2, _mainSize - 2, 0), player.Mines);
+            }
+            else
+            {
+                _playerOne = new PlayerGame(new Player(new Vector2(_mainSize * 3, _mainSize + (float)(_mainSize * 2)), _movementSpeed), new Sprite(_playerOneSprite[0], _mainSize - 2, _mainSize - 2, 0), player.Mines);
+            }
+
+            //_playerTwo = new PlayerGame(new Player(new Vector2(_mainSize * 31, _mainSize + (float)(_mainSize * 16)), _movementSpeed), new Sprite(_playerTwoSprite[0], _mainSize - 2, _mainSize - 2, 0), mine2);
             _positionPlayer1 = _playerOne.ObjectGame.Position;
-            _positionPlayer2 = _playerTwo.ObjectGame.Position;
+            //_positionPlayer2 = _playerTwo.ObjectGame.Position;
             _playerMiningSprite = new bool[2];
             _playerMiningSprite[0] = false;
             _playerMiningSprite[1] = false;
@@ -179,7 +193,7 @@ namespace Miner
             _dXInput.UpdateKeyboard();
 
             _target.BeginDraw();
-            //_target.Clear(Color.Black);
+            _target.Clear(Color.Black);
             _drawer.Draw(_background);
 
             WallsDraw();
@@ -238,41 +252,41 @@ namespace Miner
                         }
                 }
 
-                if (_playerTwo.GetLive())
-                {
-                    if (_dXInput.KeyboardState.IsPressed(SharpDX.DirectInput.Key.NumberPad1)) _playerTwo.GetChooseMina(1);
-                    if (_dXInput.KeyboardState.IsPressed(SharpDX.DirectInput.Key.NumberPad2)) _playerTwo.GetChooseMina(2);
-                    if (_dXInput.KeyboardState.IsPressed(SharpDX.DirectInput.Key.NumberPad3)) _playerTwo.GetChooseMina(3);
+                /* if (_playerTwo.GetLive())
+                 {
+                     if (_dXInput.KeyboardState.IsPressed(SharpDX.DirectInput.Key.NumberPad1)) _playerTwo.GetChooseMina(1);
+                     if (_dXInput.KeyboardState.IsPressed(SharpDX.DirectInput.Key.NumberPad2)) _playerTwo.GetChooseMina(2);
+                     if (_dXInput.KeyboardState.IsPressed(SharpDX.DirectInput.Key.NumberPad3)) _playerTwo.GetChooseMina(3);
 
-                    if (_dXInput.KeyboardState.IsPressed(SharpDX.DirectInput.Key.Up) && !GetСollision(_playerTwo, 0, -_movementSpeed)) _playerTwo.Movement(MovementKeys.Up);
-                    if (_dXInput.KeyboardState.IsPressed(SharpDX.DirectInput.Key.Left) && !GetСollision(_playerTwo, -_movementSpeed, 0)) _playerTwo.Movement(MovementKeys.Left);
-                    if (_dXInput.KeyboardState.IsPressed(SharpDX.DirectInput.Key.Down) && !GetСollision(_playerTwo, 0, _movementSpeed)) _playerTwo.Movement(MovementKeys.Down);
-                    if (_dXInput.KeyboardState.IsPressed(SharpDX.DirectInput.Key.Right) && !GetСollision(_playerTwo, _movementSpeed, 0)) _playerTwo.Movement(MovementKeys.Right);
+                     if (_dXInput.KeyboardState.IsPressed(SharpDX.DirectInput.Key.Up) && !GetСollision(_playerTwo, 0, -_movementSpeed)) _playerTwo.Movement(MovementKeys.Up);
+                     if (_dXInput.KeyboardState.IsPressed(SharpDX.DirectInput.Key.Left) && !GetСollision(_playerTwo, -_movementSpeed, 0)) _playerTwo.Movement(MovementKeys.Left);
+                     if (_dXInput.KeyboardState.IsPressed(SharpDX.DirectInput.Key.Down) && !GetСollision(_playerTwo, 0, _movementSpeed)) _playerTwo.Movement(MovementKeys.Down);
+                     if (_dXInput.KeyboardState.IsPressed(SharpDX.DirectInput.Key.Right) && !GetСollision(_playerTwo, _movementSpeed, 0)) _playerTwo.Movement(MovementKeys.Right);
 
-                    PlayerRotation(_playerTwo);
+                     PlayerRotation(_playerTwo);
 
-                    if (_dXInput.KeyboardState.IsPressed(SharpDX.DirectInput.Key.RightShift) && !_playerTwo.Installation)
-                        if (_playerTwo.GetMining())
-                        {
-                            switch (_playerTwo.MineActive)
-                            {
-                                case 1:
-                                    _mineTwo = new MineGame(new SmallMine(new Mine(_playerTwo.Rect.Center)), new Sprite(_mineSmall, (int)(_mainSize / 2), (int)(_mainSize / 2), 0), _helper.Time + 1, (float)_mainSize / 350);
-                                    break;
-                                case 2:
-                                    _mineTwo = new MineGame(new MediumMine(new Mine(_playerTwo.Rect.Center)), new Sprite(_mineMedium, (int)(_mainSize / 2), (int)(_mainSize / 2), 0), (float)(_helper.Time + 1.5), (float)_mainSize / 350);
-                                    break;
-                                case 3:
-                                    _mineTwo = new MineGame(new LargeMine(new Mine(_playerTwo.Rect.Center)), new Sprite(_mineLarge, (int)(_mainSize / 2), (int)(_mainSize / 2), 0), _helper.Time + 2, (float)_mainSize / 350);
-                                    break;
-                            }
+                     if (_dXInput.KeyboardState.IsPressed(SharpDX.DirectInput.Key.RightShift) && !_playerTwo.Installation)
+                         if (_playerTwo.GetMining())
+                         {
+                             switch (_playerTwo.MineActive)
+                             {
+                                 case 1:
+                                     _mineTwo = new MineGame(new SmallMine(new Mine(_playerTwo.Rect.Center)), new Sprite(_mineSmall, (int)(_mainSize / 2), (int)(_mainSize / 2), 0), _helper.Time + 1, (float)_mainSize / 350);
+                                     break;
+                                 case 2:
+                                     _mineTwo = new MineGame(new MediumMine(new Mine(_playerTwo.Rect.Center)), new Sprite(_mineMedium, (int)(_mainSize / 2), (int)(_mainSize / 2), 0), (float)(_helper.Time + 1.5), (float)_mainSize / 350);
+                                     break;
+                                 case 3:
+                                     _mineTwo = new MineGame(new LargeMine(new Mine(_playerTwo.Rect.Center)), new Sprite(_mineLarge, (int)(_mainSize / 2), (int)(_mainSize / 2), 0), _helper.Time + 2, (float)_mainSize / 350);
+                                     break;
+                             }
 
-                            _playerTwo.Sprite.ReplaceSprite(_playerTwoSprite[1]);
-                            _playerTwoDelay = _helper.Time + 0.25f;
-                            _playerMiningSprite[1] = true;
-                            _soundsControl.Mine();
-                        }
-                }
+                             _playerTwo.Sprite.ReplaceSprite(_playerTwoSprite[1]);
+                             _playerTwoDelay = _helper.Time + 0.25f;
+                             _playerMiningSprite[1] = true;
+                             _soundsControl.Mine();
+                         }
+                 }*/
 
                 StrokePlayer();
             }
@@ -325,14 +339,14 @@ namespace Miner
                 _playerMiningSprite[0] = false;
             }
 
-            if (_playerMiningSprite[1] && _playerTwoDelay <= _helper.Time && _playerTwo.GetLive())
-            {
-                _playerTwo.Sprite.ReplaceSprite(_playerTwoSprite[0]);
-                _playerMiningSprite[1] = false;
-            }
+            /* if (_playerMiningSprite[1] && _playerTwoDelay <= _helper.Time && _playerTwo.GetLive())
+             {
+                 _playerTwo.Sprite.ReplaceSprite(_playerTwoSprite[0]);
+                 _playerMiningSprite[1] = false;
+             }*/
 
             _drawer.Draw(_playerOne);
-            _drawer.Draw(_playerTwo);
+            //_drawer.Draw(_playerTwo);
         }
 
         /// <summary>
@@ -378,32 +392,32 @@ namespace Miner
                 }
             }
 
-            foreach (var mine in _menuMineTwo)
-            {
-                _drawer.DrawObject(mine);
-                RectangleF rect = mine.Rect;
-                rect.X += (float)(_mainSize / 4);
-                rect.Width += (float)(_mainSize / 2.4);
+            /* foreach (var mine in _menuMineTwo)
+             {
+                 _drawer.DrawObject(mine);
+                 RectangleF rect = mine.Rect;
+                 rect.X += (float)(_mainSize / 4);
+                 rect.Width += (float)(_mainSize / 2.4);
 
-                switch (mine.Mine.Type)
-                {
-                    case MineType.Small:
-                        _drawer.DrawText(rect, _playerTwo.Mines[1]);
-                        if (_playerTwo.MineActive == 1)
-                            _dx2d.RenderTarget.DrawRectangle(mine.Rect, _dx2d.Brush);
-                        break;
-                    case MineType.Medium:
-                        if (_playerTwo.MineActive == 2)
-                            _dx2d.RenderTarget.DrawRectangle(mine.Rect, _dx2d.Brush);
-                        _drawer.DrawText(rect, _playerTwo.Mines[2]);
-                        break;
-                    case MineType.Large:
-                        if (_playerTwo.MineActive == 3)
-                            _dx2d.RenderTarget.DrawRectangle(mine.Rect, _dx2d.Brush);
-                        _drawer.DrawText(rect, _playerTwo.Mines[3]);
-                        break;
-                }
-            }
+                 switch (mine.Mine.Type)
+                 {
+                     case MineType.Small:
+                         _drawer.DrawText(rect, _playerTwo.Mines[1]);
+                         if (_playerTwo.MineActive == 1)
+                             _dx2d.RenderTarget.DrawRectangle(mine.Rect, _dx2d.Brush);
+                         break;
+                     case MineType.Medium:
+                         if (_playerTwo.MineActive == 2)
+                             _dx2d.RenderTarget.DrawRectangle(mine.Rect, _dx2d.Brush);
+                         _drawer.DrawText(rect, _playerTwo.Mines[2]);
+                         break;
+                     case MineType.Large:
+                         if (_playerTwo.MineActive == 3)
+                             _dx2d.RenderTarget.DrawRectangle(mine.Rect, _dx2d.Brush);
+                         _drawer.DrawText(rect, _playerTwo.Mines[3]);
+                         break;
+                 }
+             }*/
         }
 
         /// <summary>
@@ -423,17 +437,17 @@ namespace Miner
             }
 
 
-            if (_playerTwo.Installation && _helper.Time <= _mineTwo.Time)
-                _drawer.Draw(_mineTwo);
-            else
-            if (_playerTwo.Installation)
-            {
-                _playerTwo.Boom();
-                _boomEffect.Add(new BoomEffectGame(new BoomEffect(_mineTwo.Rect.Center), new Sprite(_boom[0], (int)(_mainSize * 1.5) * _mineTwo.Mine.Radius, (int)(_mainSize * 1.5) * _mineTwo.Mine.Radius, 0), (float)_mainSize / 333 * _mineTwo.Mine.Radius));
+            /* if (_playerTwo.Installation && _helper.Time <= _mineTwo.Time)
+                 _drawer.Draw(_mineTwo);
+             else
+             if (_playerTwo.Installation)
+             {
+                 _playerTwo.Boom();
+                 _boomEffect.Add(new BoomEffectGame(new BoomEffect(_mineTwo.Rect.Center), new Sprite(_boom[0], (int)(_mainSize * 1.5) * _mineTwo.Mine.Radius, (int)(_mainSize * 1.5) * _mineTwo.Mine.Radius, 0), (float)_mainSize / 333 * _mineTwo.Mine.Radius));
 
-                BoomDraw();
-                _soundsControl.Boom();
-            }
+                 BoomDraw();
+                 _soundsControl.Boom();
+             }*/
         }
 
         /// <summary>
@@ -532,12 +546,12 @@ namespace Miner
                 _positionPlayer1 = _playerOne.ObjectGame.Position;
             }
 
-            if (_strokeDelay <= _helper.Time && _positionPlayer2 != _playerTwo.ObjectGame.Position)
-            {
-                _soundsControl.Step();
-                _strokeDelay = _helper.Time + 0.35f;
-                _positionPlayer2 = _playerTwo.ObjectGame.Position;
-            }
+            /* if (_strokeDelay <= _helper.Time && _positionPlayer2 != _playerTwo.ObjectGame.Position)
+             {
+                 _soundsControl.Step();
+                 _strokeDelay = _helper.Time + 0.35f;
+                 _positionPlayer2 = _playerTwo.ObjectGame.Position;
+             }*/
         }
 
         /// <summary>
@@ -582,7 +596,7 @@ namespace Miner
                             case 1:
                                 wall.Sprite.ReplaceSprite(_wallMedium1);
                                 break;
-                        } 
+                        }
 
                         if (!wall.Wall.GetLive())
                             _soundsControl.WallStoneDamage();
@@ -605,7 +619,23 @@ namespace Miner
         private void WallGeneration()
         {
             MapChoice mc = new MapChoice();
-            _wallsIndx = mc.GetWalls();
+
+            if (_socket is Client clientSocket)
+            {
+                while (clientSocket.MapInfo == "")
+                { }
+
+                _wallsIndx = mc.WallParce(clientSocket.MapInfo);
+            }
+            else
+            {
+                _wallsIndx = mc.GetWalls();
+
+                if (_socket is Server server)
+                {
+                    server.SendMessageAsync($"MapInfo {mc.GetWallsToString()}");
+                }
+            }
 
             for (int x = 0; x < _wallsIndx.GetLength(0); x++)
                 for (int y = 0; y < _wallsIndx.GetLength(1); y++)
@@ -633,6 +663,7 @@ namespace Miner
                             break;
                     }
                 }
+
         }
 
         /// <summary>
@@ -649,32 +680,32 @@ namespace Miner
                 _soundsControl.Dead();
             }
 
-            if (boom.Rect.Intersects(_playerTwo.Rect))
-            {
-                _playerTwo.Kill();
-                _playerTwo.Sprite.ReplaceSprite(_playerDead);
-                _soundsControl.Dead();
-            }
+            /* if (boom.Rect.Intersects(_playerTwo.Rect))
+             {
+                 _playerTwo.Kill();
+                 _playerTwo.Sprite.ReplaceSprite(_playerDead);
+                 _soundsControl.Dead();
+             }
 
-            if (!_playerOne.GetLive() && !_playerTwo.GetLive())
-            {
-                _win = $"Ничья!\nВсе игроки погибли";
-                return true;
-            }
-            else
-            if (!_playerOne.GetLive())
-            {
-                _win = $"{_name[1]} победил!";
-                return true;
-            }
-            else
-            if (!_playerTwo.GetLive())
-            {
-                _win = $"{_name[0]} победил!";
-                return true;
-            }
-            else
-                return false;
+             if (!_playerOne.GetLive() && !_playerTwo.GetLive())
+             {
+                 _win = $"Ничья!\nВсе игроки погибли";
+                 return true;
+             }
+             else
+             if (!_playerOne.GetLive())
+             {
+                 _win = $"{_name[1]} победил!";
+                 return true;
+             }
+             else
+             if (!_playerTwo.GetLive())
+             {
+                 _win = $"{_name[0]} победил!";
+                 return true;
+             }
+             else*/
+            return false;
         }
 
         /// <summary>
@@ -691,23 +722,24 @@ namespace Miner
         /// <returns>Возвращает статус завершения игры</returns>
         public bool End()
         {
-            if (!_playerOne.GetInGame() && !_playerTwo.GetInGame() && _playerOne.GetLive() && _playerTwo.GetLive())
-            {
-                _win = $"Ничья!\nУ игроков закончились мины";
-                _game = false;
-            }
+            /* if (!_playerOne.GetInGame() && !_playerTwo.GetInGame() && _playerOne.GetLive() && _playerTwo.GetLive())
+             {
+                 _win = $"Ничья!\nУ игроков закончились мины";
+                 _game = false;
+             }
+            */
 
-            if (!_game && _delay <= _helper.Time && _delay != default)
-            {
-                _renderForm.Close();
-                return true;
+             if (!_game && _delay <= _helper.Time && _delay != default)
+             {
+                 _renderForm.Close();
+                 return true;
 
-            }
+             }
 
-            if (!_game && _delay == default)
-            {
-                _delay = _helper.Time + 1.5f;
-            }
+             if (!_game && _delay == default)
+             {
+                 _delay = _helper.Time + 1.5f;
+             }
 
             return false;
         }

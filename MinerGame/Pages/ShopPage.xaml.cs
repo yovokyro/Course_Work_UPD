@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Navigation;
@@ -68,9 +69,9 @@ namespace MinerGame.Pages
         {
             if (player.Money >= 10)
             {
-                player.Buy(0, 10);
+                player.Buy(1, 10);
                 playerMoney.Content = player.Money;
-                lowCount.Content = player.Mines[0];
+                lowCount.Content = player.Mines[1];
 
                 BlockButton();
             }
@@ -80,9 +81,9 @@ namespace MinerGame.Pages
         {
             if (player.Money >= 20)
             {
-                player.Buy(1, 20);
+                player.Buy(2, 20);
                 playerMoney.Content = player.Money;
-                mediumCount.Content = player.Mines[1];
+                mediumCount.Content = player.Mines[2];
 
                 BlockButton();
             }
@@ -92,9 +93,9 @@ namespace MinerGame.Pages
         {
             if (player.Money >= 50)
             {
-                player.Buy(2, 50);
+                player.Buy(3, 50);
                 playerMoney.Content = player.Money;
-                highCount.Content = player.Mines[2];
+                highCount.Content = player.Mines[3];
 
                 BlockButton();
             }
@@ -138,7 +139,7 @@ namespace MinerGame.Pages
 
                         if (_socket is Server serverSocket)
                         {
-                            if(!serverSocket.ClientReady)
+                            if (!serverSocket.ClientReady)
                             {
                                 errorOutput.Visibility = Visibility.Visible;
                                 errorOutput.Content = "Клиент не готов.";
@@ -147,20 +148,22 @@ namespace MinerGame.Pages
                         }
 
                         player.SetName(name);
+                        _socket.SendMessageAsync("GameTrue");
+                        Task.Delay(100);
 
-                        /* Application.Current.MainWindow.IsEnabled = false;
-                         Application.Current.MainWindow.Visibility = Visibility.Collapsed;
-                         Miner.Application game;
+                        Application.Current.MainWindow.IsEnabled = false;
+                        Application.Current.MainWindow.Visibility = Visibility.Collapsed;
+                        Miner.Application game;
 
-                             game = new Miner.Application(_mineCountPlayer1, _mineCountPlayer2, _name, _musicVolume, _soundsVolume);
-                             game.Run();
-                             game.Dispose();
+                        game = new Miner.Application(_socket, player, _musicVolume, _soundsVolume);
+                        game.Run();
+                        game.Dispose();
 
-                             NavigationService.Navigate(new EndPage(game.Win));
+                        NavigationService.Navigate(new EndPage(game.Win));
 
 
-                         Application.Current.MainWindow.IsEnabled = true;
-                         Application.Current.MainWindow.Visibility = Visibility.Visible;*/
+                        Application.Current.MainWindow.IsEnabled = true;
+                        Application.Current.MainWindow.Visibility = Visibility.Visible;
                     }
 
                     else
@@ -205,6 +208,8 @@ namespace MinerGame.Pages
 
 
                             buttonBack.IsEnabled = false;
+
+                            WhaitGame();
                         }
                         else
                         {
@@ -237,6 +242,36 @@ namespace MinerGame.Pages
                 }
             }
             catch { }
+        }
+
+        private async void WhaitGame()
+        {
+            if (_socket is Client clientSocket)
+            {
+                while (IsDone)
+                {
+                    if (clientSocket.GameStart)
+                    {
+                        Application.Current.MainWindow.IsEnabled = false;
+                        Application.Current.MainWindow.Visibility = Visibility.Collapsed;
+                        Miner.Application game;
+
+                        game = new Miner.Application(_socket, player, _musicVolume, _soundsVolume);
+                        game.Run();
+                        game.Dispose();
+
+                        NavigationService.Navigate(new EndPage(game.Win));
+
+
+                        Application.Current.MainWindow.IsEnabled = true;
+                        Application.Current.MainWindow.Visibility = Visibility.Visible;
+                    }
+                    else
+                    {
+                         await Task.Delay(50);
+                    }
+                }
+            }
         }
     }
 }

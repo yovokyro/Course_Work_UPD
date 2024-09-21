@@ -6,7 +6,8 @@
       xmlns:local="clr-namespace:MinerGame.Pages"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
-      Title="ComplexityPage">
+      Title="ComplexityPage"
+      Loaded="ComplexityPage_Loaded">
 
     <Grid HorizontalAlignment="Center" Width="800" Height="450" VerticalAlignment="Top">
         <Rectangle Height="340" Margin="133,30,132,0" Stroke="Black" VerticalAlignment="Top" Fill="#6CFFFFFF"/>

@@ -22,7 +22,7 @@ namespace UPDController
             _name = "Player";
             _mineCount = 0;
             _mines = new Dictionary<int, int>();
-            for (int i = 0; i < 3; i++)
+            for (int i = 1; i <= 3; i++)
             {
                 _mines.Add(i, 0);
             }

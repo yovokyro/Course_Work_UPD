@@ -71,5 +71,26 @@ namespace Miner
 
             return "";
         }
+
+        /// <summary>
+        /// Возвращает случайную уникальную директорию со спрайтом персонажа
+        /// </summary>
+        /// <returns>Возвращает случайную уникальную директорию со спрайтом персонажа</returns>
+        public string GetDirectory(int min, int max)
+        {
+            if (_check)
+            {
+                int index = _rd.Next(min, max);
+
+                for (int i = 0; i < _busy.Count; i++)
+                    if (index == _busy[i])
+                        return GetDirectory();
+
+                _busy.Add(index);
+                return _directory[index];
+            }
+
+            return "";
+        }
     }
 }

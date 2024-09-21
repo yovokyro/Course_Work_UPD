@@ -32,6 +32,13 @@ namespace UPDController
         private bool _isConnection = false;
         public bool IsConnection => _isConnection;
 
+        private bool _gameStart = false;
+        public bool GameStart => _gameStart;
+
+        private string _mapInfo = "";
+        public string MapInfo => _mapInfo;
+
+
         public static Client GetInstance()
         {
             if (_instance == null)
@@ -118,6 +125,18 @@ namespace UPDController
                         if (split.Length > 1 && int.TryParse(split[1], out int money))
                         {
                             _money = money;
+                        }
+                    }
+                    else if (message.Equals("GameTrue"))
+                    {
+                        _gameStart = true;
+                    }
+                    else if (message.Contains("MapInfo"))
+                    {
+                        string[] split = message.Split(' ');
+                        if (split.Length > 1)
+                        {
+                            _mapInfo = split[1];
                         }
                     }
 

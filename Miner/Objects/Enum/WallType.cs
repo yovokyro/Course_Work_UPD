@@ -5,7 +5,7 @@
     /// </summary>
     public enum WallType
     {
-        None,
+        None = 0,
         Weak,
         Medium,
         Endless

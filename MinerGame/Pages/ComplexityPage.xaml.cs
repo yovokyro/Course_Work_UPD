@@ -49,5 +49,15 @@ namespace MinerGame.Pages
 
             NavigationService.Navigate(new ShopPage(_socket, _money));
         }
+
+        private void ComplexityPage_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (_socket != null)
+            {
+                _socket.StopReceive();
+                _socket.ClearInstance();
+                _socket = null;
+            }
+        }
     }
 }
