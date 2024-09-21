@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Miner", "Miner\Miner.csproj
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MinerTests", "UnitTestProject1\MinerTests.csproj", "{B96AE8DE-1028-4A75-B916-FFA23BC0FCC6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UPDController", "UPDController\UPDController.csproj", "{F5054F43-C64C-438E-80D7-1A8112519D47}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{B96AE8DE-1028-4A75-B916-FFA23BC0FCC6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B96AE8DE-1028-4A75-B916-FFA23BC0FCC6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B96AE8DE-1028-4A75-B916-FFA23BC0FCC6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F5054F43-C64C-438E-80D7-1A8112519D47}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F5054F43-C64C-438E-80D7-1A8112519D47}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F5054F43-C64C-438E-80D7-1A8112519D47}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F5054F43-C64C-438E-80D7-1A8112519D47}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

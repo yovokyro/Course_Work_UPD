@@ -9,7 +9,7 @@
       Title="ComplexityPage">
 
     <Grid HorizontalAlignment="Center" Width="800" Height="450" VerticalAlignment="Top">
-        <Rectangle Height="340" Margin="133,30,132,0" Stroke="Black" VerticalAlignment="Top" Fill="#4CFFFFFF"/>
+        <Rectangle Height="340" Margin="133,30,132,0" Stroke="Black" VerticalAlignment="Top" Fill="#6CFFFFFF"/>
         <Label Content="Выберите режим игры" Margin="0,41,0,0" FontSize="36" FontFamily="Arial Black" HorizontalAlignment="Center" Width="470" Height="51" VerticalAlignment="Top"/>
         <Button x:Name="buttonFastGame" Content="Быстрая игра" Margin="0,127,0,0" Background="#662BFF00" FontFamily="Arial Black" FontSize="15" BorderBrush="#FF37FF00" Click="buttonFastGame_Click" HorizontalAlignment="Center" Width="470" Height="60" VerticalAlignment="Top"/>
         <Button x:Name="buttonNormalGame" Content="Обычная игра" Margin="0,200,0,0" FontFamily="Arial Black" FontSize="15" Background="#662BFF00" BorderBrush="#FF13FF00" Click="buttonNormalGame_Click" HorizontalAlignment="Center" Width="470" Height="60" VerticalAlignment="Top"/>

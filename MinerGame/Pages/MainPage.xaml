@@ -6,7 +6,8 @@
       xmlns:local="clr-namespace:MinerGame.Pages"
       mc:Ignorable="d" 
       d:DesignHeight="400" d:DesignWidth="800"
-      Title="MainPage">
+      Title="MainPage"
+      Loaded="MainPage_Loaded">
 
     <Grid Height="400" VerticalAlignment="Bottom">
         <Button x:Name="buttonСreate" Content="Создать комнату" HorizontalAlignment="Center" Margin="0,32,0,308" Width="378" Height="60" Background="#591FFF00" BorderBrush="#FF37FF00" FontFamily="Arial Black" FontSize="15" Click="buttonCreate_Click"/>
@@ -14,4 +15,5 @@
         <Button x:Name="buttonExit" Content="Выйти" HorizontalAlignment="Center" Background="#59FF0000" FontFamily="Arial" FontSize="15" Width="378" Click="buttonExit_Click" Margin="0,272,0,68"/>
         <Button x:Name="buttonSettingOpen" Content="Настройки" HorizontalAlignment="Center" Margin="0,192,0,148" Width="378" Background="#591FFF00" BorderBrush="#FF2BFF00" FontFamily="Arial Black" FontSize="15" Click="buttonSettingOpen_Click"/>
     </Grid>
+    
 </Page>

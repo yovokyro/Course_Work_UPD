@@ -110,6 +110,11 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\UPDController\UPDController.csproj">
+      <Project>{f5054f43-c64c-438e-80d7-1a8112519d47}</Project>
+      <Name>UPDController</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

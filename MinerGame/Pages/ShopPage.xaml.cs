@@ -1,7 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using System.Windows.Navigation;
+using UPDController;
 
 namespace MinerGame.Pages
 {
@@ -10,39 +11,52 @@ namespace MinerGame.Pages
     /// </summary>
     public partial class ShopPage : Page
     {
-        private string[] _name;
-        private double[] _money;
+        private PlayerSetting player;
 
-        private int[] _mineCount;
+        private ISocket _socket;
 
-        private Dictionary<int, int> _mineCountPlayer1;
-        private Dictionary<int, int> _mineCountPlayer2;
+        private Color backgroundNoDone = Color.FromArgb(0x66, 0xFF, 0x7F, 0x00);
+        private Color backgroundDone = Color.FromArgb(0x66, 0x00, 0xFF, 0x00);
+
+        private Color borderNoDone = Color.FromArgb(0xFF, 0xFF, 0x7F, 0x00);
+        private Color borderDone = Color.FromArgb(0xFF, 0x08, 0xFF, 0x00);
+
+        private bool IsDone = false;
 
         private float _musicVolume;
         private float _soundsVolume;
 
-        public ShopPage(double money)
+        public ShopPage(ISocket socket, double money)
         {
             InitializeComponent();
-            _money = new double[2];
-            _name = new string[2];
-            _mineCount = new int[2];
-            _mineCountPlayer1 = new Dictionary<int, int>();
-            _mineCountPlayer2 = new Dictionary<int, int>();
 
-            _money[0] = money;
-            _money[1] = money;
+            _socket = socket;
+            if (_socket.Type == SocketTypes.Server)
+            {
+                if (_socket is Server serverSocket)
+                {
+                    serverSocket.SetMoney(money);
+                }
 
-            playerMoney1.Content = _money[0];
-            playerMoney2.Content = _money[1];
+                buttonDone.Visibility = Visibility.Hidden;
+                buttonStart.Visibility = Visibility.Visible;
 
-            _mineCountPlayer1.Add(1, 0);
-            _mineCountPlayer1.Add(2, 0);
-            _mineCountPlayer1.Add(3, 0);
+                ip.Content = $"SERVER IP:\n{_socket.GetAddress()}";
+            }
+            else
+            {
+                playerName.Foreground = Brushes.Red;
+                playerName.Text = "Игрок2";
 
-            _mineCountPlayer2.Add(1, 0);
-            _mineCountPlayer2.Add(2, 0);
-            _mineCountPlayer2.Add(3, 0);
+                buttonDone.Visibility = Visibility.Visible;
+                buttonStart.Visibility = Visibility.Hidden;
+
+                ip.Content = $"CLIENT IP:\n{_socket.GetAddress()}";
+            }
+
+
+            player = new PlayerSetting(money);
+            playerMoney.Content = player.Money;
 
             _musicVolume = Properties.Settings.Default.MusicVolume;
             _soundsVolume = Properties.Settings.Default.SoundsVolume;
@@ -50,117 +64,56 @@ namespace MinerGame.Pages
             BlockButton();
         }
 
-        private void buttonLowMine1_Click(object sender, RoutedEventArgs e)
+        private void buttonLowMine_Click(object sender, RoutedEventArgs e)
         {
-            if (_money[0] >= 10)
+            if (player.Money >= 10)
             {
-                _mineCount[0]++;
-                _money[0] -= 10;
-                playerMoney1.Content = _money[0];
-                lowCount1.Content = ++_mineCountPlayer1[1];
+                player.Buy(0, 10);
+                playerMoney.Content = player.Money;
+                lowCount.Content = player.Mines[0];
 
                 BlockButton();
             }
         }
 
-        private void buttonMediumMine1_Click(object sender, RoutedEventArgs e)
+        private void buttonMediumMine_Click(object sender, RoutedEventArgs e)
         {
-            if (_money[0] >= 20)
+            if (player.Money >= 20)
             {
-                _mineCount[0]++;
-                _money[0] -= 20;
-                playerMoney1.Content = _money[0];
-
-                mediumCount1.Content = ++_mineCountPlayer1[2];
+                player.Buy(1, 20);
+                playerMoney.Content = player.Money;
+                mediumCount.Content = player.Mines[1];
 
                 BlockButton();
             }
         }
 
-        private void buttonHardMine1_Click(object sender, RoutedEventArgs e)
+        private void buttonHardMine_Click(object sender, RoutedEventArgs e)
         {
-            if (_money[0] >= 50)
+            if (player.Money >= 50)
             {
-                _mineCount[0]++;
-                _money[0] -= 50;
-                playerMoney1.Content = _money[0];
-
-                highCount1.Content = ++_mineCountPlayer1[3];
+                player.Buy(2, 50);
+                playerMoney.Content = player.Money;
+                highCount.Content = player.Mines[2];
 
                 BlockButton();
             }
         }
 
-        private void buttonLowMine2_Click(object sender, RoutedEventArgs e)
-        {
-            if (_money[1] >= 10)
-            { 
-                _mineCount[1]++;
-                _money[1] -= 10;
-                playerMoney2.Content = _money[1];
-
-                lowCount2.Content = ++_mineCountPlayer2[1]; ;
-
-                BlockButton();
-            }
-        }
-
-        private void buttonMediumMine2_Click(object sender, RoutedEventArgs e)
-        {
-            if (_money[1] >= 20)
-            {
-                _mineCount[1]++;
-                _money[1] -= 20;
-                playerMoney2.Content = _money[1];
-
-                mediumCount2.Content = ++_mineCountPlayer2[2];
-
-                BlockButton();
-            }
-        }
-
-        private void buttonHardMine2_Click(object sender, RoutedEventArgs e)
-        {
-            if (_money[1] >= 50)
-            {
-                _mineCount[1]++;
-                _money[1] -= 50;
-                playerMoney2.Content = _money[1];
-
-                highCount2.Content = ++_mineCountPlayer2[3];
-
-                BlockButton();
-            }
-        }
 
         private void BlockButton()
         {
-            if (_money[0] < 50 && buttonLowMine1.IsEnabled != false)
+            if (player.Money < 50 && buttonLowMine.IsEnabled != false)
             {
-                buttonHardMine1.IsEnabled = false;
+                buttonHardMine.IsEnabled = false;
 
-                if (_money[0] < 20)
+                if (player.Money < 20)
                 {
-                    buttonMediumMine1.IsEnabled = false;
+                    buttonMediumMine.IsEnabled = false;
 
-                    if (_money[0] < 10)
+                    if (player.Money < 10)
                     {
-                        buttonLowMine1.IsEnabled = false;
-                    }
-                }
-            }
-
-            if (_money[1] < 50 && buttonLowMine2.IsEnabled != false)
-            {
-                buttonHardMine2.IsEnabled = false;
-
-                if (_money[1] < 20)
-                {
-                    buttonMediumMine2.IsEnabled = false;
-
-                    if (_money[1] < 10)
-                    {
-                        buttonLowMine2.IsEnabled = false;
+                        buttonLowMine.IsEnabled = false;
                     }
                 }
             }
@@ -175,38 +128,112 @@ namespace MinerGame.Pages
         {
             try
             {
-                if (_mineCount[0] != 0 && _mineCount[1] != 0)
+                if (player.MineCount != 0)
                 {
-                    _name[0] = playerName1.Text.Replace(" ", "");
-                    _name[1] = playerName2.Text.Replace(" ", "");
+                    string name = playerName.Text.Replace(" ", "");
 
-                    if (_name[0].Length != 0 && _name[1].Length != 0)
+                    if (name.Length != 0)
                     {
-                        Application.Current.MainWindow.IsEnabled = false;
-                        Application.Current.MainWindow.Visibility = Visibility.Collapsed;
-                        Miner.Application game;
-                        
-                            game = new Miner.Application(_mineCountPlayer1, _mineCountPlayer2, _name, _musicVolume, _soundsVolume);
-                            game.Run();
-                            game.Dispose();
+                        errorOutput.Visibility = Visibility.Hidden;
 
-                            NavigationService.Navigate(new EndPage(game.Win));
-                    
+                        if (_socket is Server serverSocket)
+                        {
+                            if(!serverSocket.ClientReady)
+                            {
+                                errorOutput.Visibility = Visibility.Visible;
+                                errorOutput.Content = "Клиент не готов.";
+                                return;
+                            }
+                        }
 
-                        Application.Current.MainWindow.IsEnabled = true;
-                        Application.Current.MainWindow.Visibility = Visibility.Visible;
+                        player.SetName(name);
+
+                        /* Application.Current.MainWindow.IsEnabled = false;
+                         Application.Current.MainWindow.Visibility = Visibility.Collapsed;
+                         Miner.Application game;
+
+                             game = new Miner.Application(_mineCountPlayer1, _mineCountPlayer2, _name, _musicVolume, _soundsVolume);
+                             game.Run();
+                             game.Dispose();
+
+                             NavigationService.Navigate(new EndPage(game.Win));
+
+
+                         Application.Current.MainWindow.IsEnabled = true;
+                         Application.Current.MainWindow.Visibility = Visibility.Visible;*/
                     }
 
                     else
                     {
                         errorOutput.Visibility = Visibility.Visible;
-                        errorOutput.Content = "Ошибка!\nИмя игрока не может\nсостоять из пробелов\nили быть пустым";
+                        errorOutput.Content = "Имя не может состоять из пробелов или быть пустым.";
                     }
                 }
                 else
                 {
                     errorOutput.Visibility = Visibility.Visible;
-                    errorOutput.Content = "Ошибка!\nУ игрока нет мин";
+                    errorOutput.Content = "Купите мины для старта.";
+                }
+            }
+            catch { }
+        }
+
+        private void buttonDone_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (player.MineCount != 0)
+                {
+                    string name = playerName.Text.Replace(" ", "");
+
+                    if (name.Length != 0)
+                    {
+                        errorOutput.Visibility = Visibility.Hidden;
+
+                        IsDone = !IsDone;
+                        SolidColorBrush backgroundBrush;
+                        SolidColorBrush borderBrush;
+                        if (IsDone)
+                        {
+                            player.SetName(name);
+
+                            backgroundBrush = new SolidColorBrush(backgroundDone);
+                            borderBrush = new SolidColorBrush(borderDone);
+                            buttonDone.Background = backgroundBrush;
+                            buttonDone.BorderBrush = borderBrush;
+                            buttonDone.Content = "Готов";
+
+
+                            buttonBack.IsEnabled = false;
+                        }
+                        else
+                        {
+                            backgroundBrush = new SolidColorBrush(backgroundNoDone);
+                            borderBrush = new SolidColorBrush(borderNoDone);
+                            buttonDone.Background = backgroundBrush;
+                            buttonDone.BorderBrush = borderBrush;
+                            buttonDone.Content = "Не готов";
+
+                            buttonBack.IsEnabled = true;
+                        }
+
+                        if (_socket is Client clientSocket)
+                        {
+                            string message = $"ClientReady {IsDone}";
+                            clientSocket.SendMessageAsync(message);
+                        }
+                    }
+
+                    else
+                    {
+                        errorOutput.Visibility = Visibility.Visible;
+                        errorOutput.Content = "Имя не может состоять из пробелов или быть пустым.";
+                    }
+                }
+                else
+                {
+                    errorOutput.Visibility = Visibility.Visible;
+                    errorOutput.Content = "Купите мины для готовности.";
                 }
             }
             catch { }

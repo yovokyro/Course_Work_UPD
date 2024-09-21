@@ -1,7 +1,8 @@
-﻿using MinerGame.UPD;
+﻿using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Navigation;
+using UPDController;
 
 namespace MinerGame.Pages
 {
@@ -10,6 +11,8 @@ namespace MinerGame.Pages
     /// </summary>
     public partial class MainPage : Page
     {
+        private ISocket _socket;
+
         public MainPage()
         {
             InitializeComponent();
@@ -17,13 +20,15 @@ namespace MinerGame.Pages
 
         private void buttonCreate_Click(object sender, RoutedEventArgs e)
         {
-            Server server = new Server();
             NavigationService.Navigate(new ComplexityPage());
         }
 
         private void buttonJoin_Click(object sender, RoutedEventArgs e)
         {
-            NavigationService.Navigate(new ComplexityPage());
+            _socket = Client.GetInstance();
+            Console.WriteLine(_socket.GetInfo());
+
+            NavigationService.Navigate(new LoadingServer(_socket));
         }
 
         private void buttonSettingOpen_Click(object sender, RoutedEventArgs e)
@@ -34,6 +39,16 @@ namespace MinerGame.Pages
         private void buttonExit_Click(object sender, RoutedEventArgs e)
         {
            Application.Current.MainWindow.Close();
+        }
+
+        private void MainPage_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (_socket != null)
+            {
+                _socket.StopReceive();
+                _socket.ClearInstance();
+                _socket = null;
+            }
         }
     }
 }

@@ -1,6 +1,8 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Navigation;
+using UPDController;
 
 namespace MinerGame.Pages
 {
@@ -10,6 +12,8 @@ namespace MinerGame.Pages
     public partial class ComplexityPage : Page
     {
         private double _money; //доступные деньги для игроков
+        private ISocket _socket;
+
         public ComplexityPage()
         {
             InitializeComponent();
@@ -38,9 +42,12 @@ namespace MinerGame.Pages
             ViewShopPage();
         }
 
-        private void ViewShopPage() //открытие след страницы
+        private void ViewShopPage()
         {
-            NavigationService.Navigate(new ShopPage(_money));
+            _socket = Server.GetInstance();
+            Console.WriteLine(_socket.GetInfo());
+
+            NavigationService.Navigate(new ShopPage(_socket, _money));
         }
     }
 }
