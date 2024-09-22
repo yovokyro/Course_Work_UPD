@@ -12,7 +12,6 @@
         <Rectangle HorizontalAlignment="Center" Height="430" Stroke="Black" VerticalAlignment="Center" Width="477" Fill="#6CFFFFFF"/>
         <Label Content="Результат игры:" HorizontalAlignment="Center" Margin="0,24,0,0" VerticalAlignment="Top" FontFamily="Arial Black" FontSize="36" Height="49" Width="340"/>
         <Button Content="Главное меню" HorizontalAlignment="Center" Margin="0,353,0,0" VerticalAlignment="Top" Height="60" Width="340" Background="#662BFF00" FontFamily="Arial Black" FontSize="15" BorderBrush="#FF37FF00" Click="mainMenu_Click"/>
-        <Button Content="Сыграть ещё" HorizontalAlignment="Center" VerticalAlignment="Top" Height="60" Width="340" Background="#662BFF00" FontFamily="Arial Black" FontSize="15" BorderBrush="#FF37FF00" Click="moreGame_Click" Margin="0,266,0,0"/>
-        <Label x:Name="output" Content="Label" HorizontalAlignment="Center"  HorizontalContentAlignment="Center" Margin="0,103,0,0" VerticalAlignment="Top" Height="144" Width="477" Foreground="Black" FontSize="24" FontFamily="Arial Black" FontWeight="Bold" AutomationProperties.IsOffscreenBehavior="FromClip"/>
+        <Label x:Name="output" Content="Label" HorizontalAlignment="Center"  HorizontalContentAlignment="Center" Margin="0,103,0,0" VerticalAlignment="Top" Height="222" Width="476" Foreground="Black" FontSize="24" FontFamily="Arial Black" FontWeight="Bold" AutomationProperties.IsOffscreenBehavior="FromClip"/>
     </Grid>
 </Page>

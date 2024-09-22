@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using SharpDX;
+using System.Text;
 using Miner.Object;
 using Miner.Object.Enum;
 using Miner.Object.Interfaces;
@@ -12,6 +14,10 @@ namespace Miner.ObjectGraph
     public class PlayerGame : RenderObject, IMine
     {
         private Player _player;
+
+        private string _name = "";
+        public string Name => _name;
+
         private float _rotation; 
         //угол поворота спрайта
         public float Rotation { get => _rotation;}
@@ -32,10 +38,11 @@ namespace Miner.ObjectGraph
         private int _mineActive;
         //определяет выбранный вид мин игрока
         public int MineActive { get => _mineActive; }
-        public PlayerGame(Player player, Sprite sprite, Dictionary<int, int> mines) : base(player, sprite)
+        public PlayerGame(Player player, Sprite sprite, Dictionary<int, int> mines, string name) : base(player, sprite)
         {
             _installation = false;
             _mines = mines;
+            _name = name;
             ChooseAutoMina();
             RotationCenter();
             _player = player;
@@ -195,6 +202,69 @@ namespace Miner.ObjectGraph
         public void RotationCenter()
         {
             Sprite.SetCenterRotation(Rect.Width * 1.2f);
+        }
+
+        public string Convert()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append($"{_player.Live};");
+            sb.Append($"{_player.Position.X},{_player.Position.Y};");
+            sb.Append($"{Rotation};");
+            sb.Append($"{RotationNow};");
+            sb.Append($"{Time};");
+            sb.Append($"{Installation};");
+            sb.Append($"{Mines[1]},{Mines[2]},{Mines[3]};");
+            sb.Append($"{MineActive};");
+            sb.Append($"{Name};");
+            sb.Append($"/{sprite.Convert()}");
+
+            return sb.ToString();
+        }
+
+        public void Parse(string info)
+        {
+            string[] split = info.Split('/');
+
+            if (split.Length > 1)
+            {
+                string[] parts = split[0].Split(';');
+
+                if (parts.Length > 7)
+                {
+                    if (bool.TryParse(parts[0], out bool live))
+                        _player.SetLive(live);
+
+                    string[] positionStr = parts[1].Split(',');
+
+                    Vector2 position = new Vector2(int.Parse(positionStr[0]), int.Parse(positionStr[1]));
+                    _player.SetPosition(position);
+
+                    if (float.TryParse(parts[2], out float rotation))
+                        _rotation = rotation;
+
+                    if (float.TryParse(parts[3], out float rotationNow))
+                        _rotationNow = rotationNow;
+
+                    if (float.TryParse(parts[4], out float time))
+                        _time = time;
+
+                    if (bool.TryParse(parts[5], out bool installation))
+                        _installation = installation;
+
+                    string[] mines = parts[6].Split(',');
+
+                    _mines[1] = int.Parse(mines[0]);
+                    _mines[2] = int.Parse(mines[1]);
+                    _mines[3] = int.Parse(mines[2]);
+
+                    if (int.TryParse(parts[7], out int mineActive))
+                        _mineActive = mineActive;
+
+                    _name = parts[8];
+                }
+
+                sprite.Parse(split[1]);
+            }
         }
     }
 }

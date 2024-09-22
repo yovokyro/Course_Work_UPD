@@ -4,6 +4,7 @@ namespace UPDController
 {
     public interface ISocket
     {
+        string PlayerInfo { get; }
         bool IsReceive { get; }
         SocketTypes Type { get; }
 

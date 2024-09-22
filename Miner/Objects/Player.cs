@@ -77,5 +77,8 @@ namespace Miner.Object
         {
             _live = false;
         }
+
+        public void SetLive(bool live) => _live = live;
+        public void SetPosition(Vector2 position) => this.position = position;
     }
 }

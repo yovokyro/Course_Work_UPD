@@ -92,5 +92,7 @@ namespace Miner
 
             return "";
         }
+
+        public string[] GetAllDirectories() => _directory;
     }
 }

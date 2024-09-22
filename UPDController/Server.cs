@@ -28,6 +28,8 @@ namespace UPDController
 
         private bool _clientReady = false;
         public bool ClientReady => _clientReady;
+        private string _playerInfo = "";
+        public string PlayerInfo => _playerInfo;
 
         public static Server GetInstance()
         {
@@ -129,6 +131,15 @@ namespace UPDController
                         if (split.Length > 1 && bool.TryParse(split[1], out bool value))
                         {
                             _clientReady = value;               
+                        }
+                    }
+                    else if (message.Contains("PlayerInfo"))
+                    {
+                        string[] split = message.Split(' ');
+
+                        if (split.Length > 1)
+                        {
+                            _playerInfo = split[1];
                         }
                     }
 

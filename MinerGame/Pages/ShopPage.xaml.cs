@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -209,7 +210,7 @@ namespace MinerGame.Pages
 
                             buttonBack.IsEnabled = false;
 
-                            WhaitGame();
+                            WhaitGame(NavigationService);
                         }
                         else
                         {
@@ -244,7 +245,7 @@ namespace MinerGame.Pages
             catch { }
         }
 
-        private async void WhaitGame()
+        private async void WhaitGame(NavigationService navigationService)
         {
             if (_socket is Client clientSocket)
             {
@@ -260,7 +261,10 @@ namespace MinerGame.Pages
                         game.Run();
                         game.Dispose();
 
-                        NavigationService.Navigate(new EndPage(game.Win));
+                        clientSocket.EndGame();
+                        IsDone = false;
+
+                        navigationService.Navigate(new EndPage(game.Win));
 
 
                         Application.Current.MainWindow.IsEnabled = true;

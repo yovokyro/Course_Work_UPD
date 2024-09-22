@@ -38,6 +38,8 @@ namespace UPDController
         private string _mapInfo = "";
         public string MapInfo => _mapInfo;
 
+        private string _playerInfo = "";
+        public string PlayerInfo => _playerInfo;
 
         public static Client GetInstance()
         {
@@ -139,6 +141,15 @@ namespace UPDController
                             _mapInfo = split[1];
                         }
                     }
+                    else if (message.Contains("PlayerInfo"))
+                    {
+                        string[] split = message.Split(' ');
+
+                        if(split.Length > 1)
+                        {
+                            _playerInfo = split[1];
+                        }
+                    }
 
                     tcs.SetResult(true);
                 };
@@ -167,6 +178,7 @@ namespace UPDController
             }
         }
 
+        public void EndGame() => _gameStart = false;
         public void StopReceive() => _isReceive = false;
         public void StartReceive() => _isReceive = true;
         public void ClearInstance() => _instance = null;

@@ -1,4 +1,5 @@
 ﻿using SharpDX;
+using System.Text;
 
 namespace Miner.Object
 {
@@ -56,6 +57,26 @@ namespace Miner.Object
         public void SetCenterRotation(float size)
         {
             _center += size;
+        }
+
+        public string Convert()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append($"{SpriteId};");
+            sb.Append($"{Rotation};");
+
+            return sb.ToString();
+        }
+
+        public void Parse(string info)
+        {
+            string[] parts = info.Split(';');
+
+            if(parts.Length > 0 ) 
+            { 
+                _spriteId = int.Parse(parts[0]);
+                _rotation = float.Parse(parts[1]);
+            }
         }
     }
 }

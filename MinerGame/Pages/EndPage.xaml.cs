@@ -17,10 +17,5 @@ namespace MinerGame.Pages
         {
             NavigationService.Navigate(new MainPage());
         }
-
-        private void moreGame_Click(object sender, System.Windows.RoutedEventArgs e)
-        {
-            NavigationService.Navigate(new ComplexityPage());
-        }
     }
 }
