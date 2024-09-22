@@ -44,7 +44,12 @@ namespace MinerGame.Pages
 
         private void ViewShopPage()
         {
-            _socket = Server.GetInstance();
+            string ipAddress = Properties.Settings.Default.IP;
+            string port = Properties.Settings.Default.PORT;
+            bool freePort = Properties.Settings.Default.FreePort;
+
+            _socket = int.TryParse(port, out int PORT) ? Server.GetInstance(ipAddress, PORT, freePort) : Server.GetInstance();
+
             Console.WriteLine(_socket.GetInfo());
 
             NavigationService.Navigate(new ShopPage(_socket, _money));

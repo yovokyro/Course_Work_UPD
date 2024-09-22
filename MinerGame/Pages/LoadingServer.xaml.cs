@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using Miner.DirectX;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Navigation;
@@ -12,6 +14,7 @@ namespace MinerGame.Pages
     public partial class LoadingServer : Page
     {
         private Client _socket;
+        private string pattern = @"^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$";
 
         public LoadingServer(ISocket socket)
         {
@@ -36,6 +39,12 @@ namespace MinerGame.Pages
             {
                 string ipAddress = split[0];
                 string portStr = split[1];
+
+                if(!Regex.IsMatch(ipAddress, pattern))
+                {
+                    ErrorOutput("Неверный формат IP.");
+                    return;
+                }
 
                 if (int.TryParse(portStr, out int port))
                 {

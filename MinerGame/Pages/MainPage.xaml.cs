@@ -25,7 +25,11 @@ namespace MinerGame.Pages
 
         private void buttonJoin_Click(object sender, RoutedEventArgs e)
         {
-            _socket = Client.GetInstance();
+            string ipAddress = Properties.Settings.Default.IP;
+            string port = Properties.Settings.Default.PORT;
+            bool freePort = Properties.Settings.Default.FreePort;
+
+            _socket = int.TryParse(port, out int PORT) ? Client.GetInstance(ipAddress, PORT, freePort) : Client.GetInstance();
             Console.WriteLine(_socket.GetInfo());
 
             NavigationService.Navigate(new LoadingServer(_socket));

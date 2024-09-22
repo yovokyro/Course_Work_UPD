@@ -39,10 +39,10 @@ namespace UPDController
             return _instance;
         }
 
-        public static Server GetInstance(IPAddress address, int port)
+        public static Server GetInstance(string address, int port, bool freePort)
         {
             if (_instance == null)
-                _instance = new Server(address, port);
+                _instance = new Server(address, port, freePort);
             
             return _instance;
         }
@@ -55,10 +55,11 @@ namespace UPDController
             Task.Run(ReceiveMessageAsync);
         }
 
-        public Server(IPAddress address, int port)
+        public Server(string address, int port, bool freePort)
         {
-            _localAddress = address;
-            _port = port;
+            _localAddress = IPAddress.Parse(address);  
+             _port = freePort ? GetAvailableUDPPort() : port;
+          
 
             _sender = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
             _receiver = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
@@ -164,7 +165,12 @@ namespace UPDController
         public void SetMoney(double money) => _money = money;
         public void StopReceive() => _isReceive = false;
         public void StartReceive() => _isReceive = true;
-        public void ClearInstance() => _instance = null;
+        public void ClearInstance()
+        {
+            _receiver.Shutdown(SocketShutdown.Both);
+            _receiver.Close();
+            _instance = null;
+        }
 
         public string GetInfo() => $"Type: {_type}; IP-address: {_localAddress}:{_port}";
         public string GetAddress() => $"{_localAddress}:{_port}";
