@@ -30,8 +30,14 @@ namespace Miner.DirectX
         public WindowRenderTarget RenderTarget { get => _renderTarget; }
 
         //формат текста (его параметры (шрифт, размер))
-        private TextFormat _textFormat;
-        public TextFormat TextFormat { get => _textFormat; }
+        private TextFormat _textFormatCenter;
+        public TextFormat TextFormatCenter { get => _textFormatCenter; }
+
+        private TextFormat _textFormatLeft;
+        public TextFormat TextFormatLeft { get => _textFormatLeft; }
+
+        private TextFormat _textFormatRight;
+        public TextFormat TextFormatRight { get => _textFormatRight; }
 
         //кисть для рисования текста (мины, если они есть и для rectangle игровых объектов)
         private Brush _brush;
@@ -40,6 +46,9 @@ namespace Miner.DirectX
         //кисть для рисования текста (используется при выводе счета мин, если их количество = 0)
         private Brush _brushRed;
         public Brush BrushRed { get => _brushRed; }
+
+        private Brush _brushBlue;
+        public Brush BrushBlue { get => _brushBlue; }
 
         //коллекция спрайтов и картинок
         private List<SharpDX.Direct2D1.Bitmap> _bitmap;
@@ -62,13 +71,22 @@ namespace Miner.DirectX
 
             _renderTarget = new WindowRenderTarget(_factory, renderProp, hwndProp);
 
-            _textFormat = new TextFormat(_textFactory, "Arial", 24);
-            _textFormat.ParagraphAlignment = ParagraphAlignment.Center;
-            _textFormat.TextAlignment = TextAlignment.Center;
+            _textFormatCenter = new TextFormat(_textFactory, "Arial", 24);
+            _textFormatCenter.ParagraphAlignment = ParagraphAlignment.Center;
+            _textFormatCenter.TextAlignment = TextAlignment.Center;
+
+            _textFormatLeft = new TextFormat(_textFactory, "Arial", 24);
+            _textFormatLeft.ParagraphAlignment = ParagraphAlignment.Center;
+            _textFormatLeft.TextAlignment = TextAlignment.Justified;
+
+            _textFormatRight = new TextFormat(_textFactory, "Arial", 24);
+            _textFormatRight.ParagraphAlignment = ParagraphAlignment.Center;
+            _textFormatRight.TextAlignment = TextAlignment.Trailing;
 
             //кисти (игровое поле, цвет кисти)
             _brush = new SolidColorBrush(_renderTarget, Color.White);
             _brushRed = new SolidColorBrush(_renderTarget, Color.Red);
+            _brushBlue = new SolidColorBrush(_renderTarget, Color.Blue);
         }
 
         /// <summary>
@@ -109,7 +127,7 @@ namespace Miner.DirectX
             }
 
             Utilities.Dispose(ref _brush);
-            Utilities.Dispose(ref _textFormat);
+            Utilities.Dispose(ref _textFormatCenter);
             Utilities.Dispose(ref _imgFactory);
             Utilities.Dispose(ref _renderTarget);
             Utilities.Dispose(ref _factory);

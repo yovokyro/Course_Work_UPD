@@ -43,7 +43,7 @@ namespace UPDController
         {
             if (_instance == null)
                 _instance = new Server(address, port, freePort);
-            
+
             return _instance;
         }
 
@@ -57,9 +57,9 @@ namespace UPDController
 
         public Server(string address, int port, bool freePort)
         {
-            _localAddress = IPAddress.Parse(address);  
-             _port = freePort ? GetAvailableUDPPort() : port;
-          
+            _localAddress = IPAddress.Parse(address);
+            _port = freePort ? GetAvailableUDPPort() : port;
+
 
             _sender = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
             _receiver = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
@@ -117,13 +117,13 @@ namespace UPDController
                             senderEndpoint.Port = port;
                             _clientAddress = senderEndpoint.Address;
                             _clientPort = port;
- 
+
                             string response = $"done {_money}";
                             byte[] responseData = Encoding.UTF8.GetBytes(response);
                             SendMessageAsync(response);
                         }
                     }
-                    else if(message.Contains("ClientReady"))
+                    else if (message.Contains("ClientReady"))
                     {
                         string[] split = message.Split(' ');
                         IPEndPoint senderEndpoint = (IPEndPoint)args.RemoteEndPoint;
@@ -131,7 +131,7 @@ namespace UPDController
 
                         if (split.Length > 1 && bool.TryParse(split[1], out bool value))
                         {
-                            _clientReady = value;               
+                            _clientReady = value;
                         }
                     }
                     else if (message.Contains("PlayerInfo"))
@@ -169,6 +169,12 @@ namespace UPDController
         {
             _receiver.Shutdown(SocketShutdown.Both);
             _receiver.Close();
+
+            _isReceive = false;
+            _money = 0;
+            _clientReady = false;
+            _playerInfo = "";
+
             _instance = null;
         }
 

@@ -90,6 +90,8 @@ namespace Miner
         private int _mineLarge;
         private int[] _boom;
 
+        private bool _playerTwoInstallMine = false;
+
         public Application(ISocket socket, PlayerSetting player, float musicVolume, float soundsVolume)
         {
             _socket = socket;
@@ -184,14 +186,14 @@ namespace Miner
             for (int i = 0; i < _boom.Length; i++)
                 _boom[i] = _dx2d.GetImageLoad($"..\\..\\..\\Resources\\mines\\boom\\boom{i}.bmp");
 
-            SendPlayerInfo();
-            GetPlayerInfo();
-
             _drawer = new Drawer(_dx2d);
             _helper = new Helper();
 
             _soundsControl = new SoundsControl(musicVolume, soundsVolume);
             _soundsControl.Music();
+
+            SendPlayerInfo();
+            GetPlayerInfo();
         }
 
         /// <summary>
@@ -202,7 +204,11 @@ namespace Miner
             if (_soundsControl.GetMusicRepeat())
                 _soundsControl.Music();
 
+
             _helper.Tick();
+
+            SendPlayerInfo();
+            GetPlayerInfo();
 
             _dXInput.UpdateKeyboard();
 
@@ -220,10 +226,8 @@ namespace Miner
             Moving();
 
             StatusMenuDraw();
+            InfoDraw();
             End();
-
-            SendPlayerInfo();
-            GetPlayerInfo();
 
             _target.EndDraw();
         }
@@ -369,6 +373,26 @@ namespace Miner
             }
         }
 
+        private void InfoDraw()
+        {
+            RectangleF rectName1 = new RectangleF(_mainSize * 16f - _mainSize * 5f, 2f, _mainSize * 4f, _mainSize / 3f);
+            RectangleF rectName2 = new RectangleF(_mainSize * 16f + _mainSize, 2f, _mainSize * 4f, _mainSize / 3f);
+            RectangleF rect = new RectangleF(_mainSize * 16f - _mainSize, 2f, _mainSize * 2f, _mainSize / 3f);
+            _drawer.DrawTextCenter(rect, "vs");
+
+
+            if(_socket.Type == SocketTypes.Client)
+            {
+                _drawer.DrawTextRight(rectName1, _playerTwo.Name);
+                _drawer.DrawTextLeft(rectName2, _player.Name);
+            }
+            else
+            {
+                _drawer.DrawTextRight(rectName1, _player.Name);
+                _drawer.DrawTextLeft(rectName2, _playerTwo.Name);
+            }
+        }
+
         /// <summary>
         /// Отображает мины
         /// </summary>
@@ -389,7 +413,7 @@ namespace Miner
             if (_playerTwo.Installation && _helper.Time <= _mineTwo.Time)
                 _drawer.Draw(_mineTwo);
             else
-            if (_playerTwo.Installation)
+            if (_playerTwoMining)
             {
                 _playerTwoMining = false;
 
@@ -628,13 +652,6 @@ namespace Miner
                 _player.Sprite.ReplaceSprite(_playerDead);
                 _soundsControl.Dead();
             }
-
-            if (boom.Rect.Intersects(_playerTwo.Rect))
-            {
-                _playerTwo.Kill();
-                _playerTwo.Sprite.ReplaceSprite(_playerDead);
-                _soundsControl.Dead();
-            }
         }
 
         public void SendPlayerInfo()
@@ -665,6 +682,7 @@ namespace Miner
                     }
 
                     _soundsControl.Mine();
+
                     _playerTwoMining = true;
                 }
             }

@@ -41,10 +41,26 @@ namespace Miner.DirectX
         public void DrawText(RectangleF rect, int count)
         {
             if (count == 0)
-                _dx2d.RenderTarget.DrawText(count.ToString(), _dx2d.TextFormat, rect, _dx2d.BrushRed);
+                _dx2d.RenderTarget.DrawText(count.ToString(), _dx2d.TextFormatCenter, rect, _dx2d.BrushRed);
             else
-                _dx2d.RenderTarget.DrawText(count.ToString(), _dx2d.TextFormat, rect, _dx2d.Brush);
+                _dx2d.RenderTarget.DrawText(count.ToString(), _dx2d.TextFormatCenter, rect, _dx2d.Brush);
         }
+
+        public void DrawTextCenter(RectangleF rect, string message)
+        {
+            _dx2d.RenderTarget.DrawText(message.ToString(), _dx2d.TextFormatCenter, rect, _dx2d.Brush);
+        }
+
+        public void DrawTextLeft(RectangleF rect, string message)
+        {
+            _dx2d.RenderTarget.DrawText(message.ToString(), _dx2d.TextFormatLeft, rect, _dx2d.BrushRed);
+        }
+
+        public void DrawTextRight(RectangleF rect, string message)
+        {
+            _dx2d.RenderTarget.DrawText(message.ToString(), _dx2d.TextFormatRight, rect, _dx2d.BrushBlue);
+        }
+
 
         /// <summary>
         /// Отрисовка динамических объектов

@@ -49,7 +49,6 @@ namespace MinerGame.Pages
         {
             if (_socket != null)
             {
-                _socket.StopReceive();
                 _socket.ClearInstance();
                 _socket = null;
             }

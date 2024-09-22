@@ -160,7 +160,7 @@ namespace MinerGame.Pages
                         game.Run();
                         game.Dispose();
 
-                        NavigationService.Navigate(new EndPage(game.Win));
+                        NavigationService.Navigate(new EndPage(game.Win, _socket));
 
 
                         Application.Current.MainWindow.IsEnabled = true;
@@ -264,7 +264,7 @@ namespace MinerGame.Pages
                         clientSocket.EndGame();
                         IsDone = false;
 
-                        navigationService.Navigate(new EndPage(game.Win));
+                        navigationService.Navigate(new EndPage(game.Win, _socket));
 
 
                         Application.Current.MainWindow.IsEnabled = true;

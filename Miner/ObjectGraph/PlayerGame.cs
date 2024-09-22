@@ -31,6 +31,7 @@ namespace Miner.ObjectGraph
         private bool _installation;
         //определяет установленную мину
         public bool Installation { get => _installation; }
+
         private Dictionary<int, int> _mines;
         //содержит количество мин игрока
         public Dictionary<int, int> Mines { get => _mines; }

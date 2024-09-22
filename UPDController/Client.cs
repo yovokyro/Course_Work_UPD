@@ -145,7 +145,7 @@ namespace UPDController
                     {
                         string[] split = message.Split(' ');
 
-                        if(split.Length > 1)
+                        if (split.Length > 1)
                         {
                             _playerInfo = split[1];
                         }
@@ -185,6 +185,14 @@ namespace UPDController
         {
             _receiver.Shutdown(SocketShutdown.Both);
             _receiver.Close();
+            _isReceive = false;
+            _money = 0;
+
+            _isConnection = false;
+            _gameStart = false;
+            _mapInfo = "";
+
+            _playerInfo = "";
             _instance = null;
         }
 
